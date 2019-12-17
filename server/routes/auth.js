@@ -9,14 +9,14 @@ const salt = bcrypt.genSaltSync(10);
 
 router.post("/login", async (req, res, next) => {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body;
         const user = await isUserExist(email, password);
-        if (!user) return res.status(401).send("ERROR LOGIN") // change to general error
-        const jwtToken = await getJwt({ ...user, password: null })
-        return res.json({ message: "user logged in", token: jwtToken })
+        if (!user) return res.status(401).send("ERROR LOGIN"); // change to general error
+        const jwtToken = await getJwt({ ...user, password: null });
+        return res.json({ message: "user logged in", token: jwtToken });
     } catch (ex) {
-        console.log(ex)
-        if (!user) return res.status(401).send("ERROR LOGIN")
+        console.log(ex);
+        if (!user) return res.status(401).send("ERROR LOGIN");
     }
     
 })
@@ -24,14 +24,32 @@ router.post("/login", async (req, res, next) => {
 
 
 router.post("/register", async (req, res, next) => {
-    const { email, password } = req.body
+    const { email, password } = req.body;
     const user = await isUserExist(email);
     if (user) return res.json({ message: "User already exist" });
     const insertId = await saveUser(req.body);
-    console.log("after save " + insertId)
+    console.log("after save " + insertId);
     if (insertId) return res.json({ message: "User saved!" });
-    return res.json({ message: "error!" })  
+    return res.json({ message: "error!" });  
 })
+
+
+
+router.use('/changePassword',(req, res, next) =>{
+  const { authorization } = req.headers;
+     jwt.verify(authorization, process.env.SECRET, (err, decoded) =>{
+      if (err) res.status(401).json({message: "Verification failed", redirect: false});
+      console.log("deco", decoded);
+      next();
+
+    })
+})
+
+
+router.post('/changePassword', (req, res, next) =>{  
+  res.json({message: `logged-in`, redirect: true });
+})
+
 
 
 module.exports = router;
@@ -41,8 +59,8 @@ module.exports = router;
 function getJwt(p) {
     return new Promise((resolve, reject) => {
         jwt.sign(p, process.env.SECRET, { expiresIn: '1h' }, (err, token) => {
-            if (err) reject("error")
-            resolve(token)
+            if (err) reject("error");
+            resolve(token);
         })
     })
 }
@@ -52,16 +70,16 @@ function getJwt(p) {
 async function isUserExist(email, password = null) {
     const payload = password ? [email, bcrypt.hashSync(password, salt)] : [email];
     const query = password ? getUserPasswordExistQuery() : getUserExistQuery();
-    const [result] = await pool.execute(query, payload)
+    const [result] = await pool.execute(query, payload);
     const [firstUser] = result;
     return firstUser;
 }
 
 
 async function saveUser(payload) {
-    const { email, password, firstName = null, lastName = null } = payload
-    const [result] = await pool.execute(getUserInsertionQuery(), [email, bcrypt.hashSync(password, salt), firstName, lastName])
-    return result.insertId
+    const { email, password, firstName = null, lastName = null } = payload;
+    const [result] = await pool.execute(getUserInsertionQuery(), [email, bcrypt.hashSync(password, salt), firstName, lastName]);
+    return result.insertId;
 }
 
 function getUserExistQuery() {
