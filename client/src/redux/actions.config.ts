@@ -1,0 +1,5 @@
+export default {
+    REGISTER: "REGISTER_ACTION",
+    LOG_IN: "LOG_IN_ACTION",
+    GET_USER_TOKEN: "GET_USER_TOKEN_ACTION" 
+}
