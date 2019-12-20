@@ -13,6 +13,9 @@ const getCities = require('./northwind/getCities');
 const getShips = require('./northwind/getShips');
 const getOrders = require('./northwind/getOrders');
 const getOrderByCity = require('./northwind/getOrdersByCity');
+const getPaymentTypes = require('./northwind/getPaymentTypes');
+const getOrderByPatmentType = require('./northwind/getOrdersByPaymentType');
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,8 +28,8 @@ app.use('/getCustomer', getCustomer);
 app.use('/getCities', getCities);
 app.use('/getShips', getShips);
 app.use('/getOrderByCity', getOrderByCity);
-
-
+app.use('/getPaymentTypes', getPaymentTypes);
+app.use('/getOrderByPatmentType', getOrderByPatmentType)
 
 app.listen(process.env.PORT, () => {
     console.log("Server is listening to port: " + process.env.PORT);

@@ -5,19 +5,25 @@ import OrdersTable from "../orders-table";
 const ordersUrl = "http://localhost:4000/getOrders";
 const shipCitiesUrl = "http://localhost:4000/getShips";
 const getOrderBycityUrl = "http://localhost:4000/getOrderByCity";
+const paymentTypesUrl = "http://localhost:4000/getPaymentTypes";
+const getOrderByPaymentTypeUrl = "http://localhost:4000/getOrderByPatmentType";
+
 
 export default class Orders extends React.Component<any, any> {
   state = {
     orders: [],
     shipCity: "",
+    paymentType: "",
     citiesList: [],
+    paymentTypesList: []
   };
 
   componentDidMount = async () => {
     try {
       const result = await axios.get(ordersUrl);
-      const result2 = await axios.get(shipCitiesUrl)
-      this.setState({ orders: result.data[0], citiesList: result2.data  });
+      const result2 = await axios.get(shipCitiesUrl);
+      const result3 = await axios.get(paymentTypesUrl)
+      this.setState({ orders: result.data[0], citiesList: result2.data, paymentTypesList: result3.data });
       } catch {
       console.log("error with orders");
     }
@@ -32,14 +38,23 @@ export default class Orders extends React.Component<any, any> {
     }    
   }
 
+  getOrdersByPaymentType = async (paymentType: any) => {
+    try {
+      const result = await axios.post(getOrderByPaymentTypeUrl, {paymentType});
+      this.setState({ orders: result.data });
+      } catch {
+      console.log("error with orders");
+    }    
+  }
+
   render() {
-    const { orders, citiesList } = this.state;
+    const { orders, citiesList, paymentTypesList } = this.state;
     if (!orders.length) return <h2>No data</h2>;
  
     const headers = getHeaders(orders);
     const data = getTableBody(orders);  
     const citiesOptions = getCitiesOptions(citiesList);
-
+    const paymentTypeOptions = getpaymentTypeOptions(paymentTypesList);
     return (
       <div>
         <h1>Orders table</h1>
@@ -54,7 +69,7 @@ export default class Orders extends React.Component<any, any> {
                   this.setState({shipCity: value})
                 }}
               > 
-
+   <option>Cities..</option>
              {citiesOptions}
               </select>
             </div>
@@ -62,19 +77,21 @@ export default class Orders extends React.Component<any, any> {
               <select
                 className="custom-select mr-sm-2"
                 id="inlineFormCustomSelect2"
+                onChange={(e)=>{
+                  const {value} = e.target
+                  this.setState({paymentType: value})
+                }}
               >
-                <option >Choose...</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+                <option>Pyment type..</option>
+              {paymentTypeOptions}
               </select>
             </div>
             <div className="col-auto my-1">
               <button type="button" className="btn btn-primary"
               onClick={()=>{
-                const { shipCity} = this.state;
+                const { shipCity, paymentType} = this.state;
                 this.getOrderBycity(shipCity);
-
+                this.getOrdersByPaymentType(paymentType)
               
               }}>
                 Submit
@@ -150,6 +167,10 @@ function getTableRow(row: any) {
 
 function getCitiesOptions(shipCities: any) {
   const citiesOptions = shipCities.map((order:any, index: number) => <option key={`city_${index}`} value={order.ship_city}> {order.ship_city} </option>) 
-
   return citiesOptions;
+}
+
+function getpaymentTypeOptions(paymentTypes: any) {
+  const paymentsOptions = paymentTypes.map((order:any, index: number) => <option key={`payment_${index}`} value={order.payment_type}> {order.payment_type} </option>) 
+  return paymentsOptions;
 }
