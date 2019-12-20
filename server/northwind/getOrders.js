@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
 })
 
 function getOrders () {
-    return 'SELECT id, ship_name, ship_address, ship_city, ship_country_region, shipping_fee, payment_type FROM orders';
+    return 'SELECT id, ship_name, ship_address, ship_city, ship_country_region, shipping_fee, payment_type FROM orders WHERE payment_type IS NOT NULL';
 }
 
 module.exports = router;

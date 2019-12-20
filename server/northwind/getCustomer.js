@@ -17,7 +17,7 @@ router.post("/", async (req, res, next) => {
 });
 
 function getCustomerQuery(params) {
-    return ['SELECT * FROM customers WHERE first_name= ? AND last_name= ?', [...Object.values(params)] ]
+    return ['SELECT first_name, last_name, job_title, address, city, country_region FROM customers WHERE first_name= ? OR last_name= ?', [...Object.values(params)] ]
 }
 
 

@@ -6,6 +6,7 @@ import Login from './component/login';
 import HomePage from './component/home';
 import ChangePassword from './component/change-password';
 import Orders from './component/orders';
+import SearchCustomer from './component/search-customer';
 
 const App: React.FC = () => {
   return (
@@ -20,7 +21,8 @@ const App: React.FC = () => {
           <Route path="/register" component={Register} />
           <Route path="/login" component={Login} />      
           <Route path="/change-password" component={ChangePassword} />      
-          <Route path="/orders" component={Orders} />      
+          <Route path="/orders" component={Orders} /> 
+          <Route path="/search-customer" component={SearchCustomer} /> 
           <Route path="**" component={Register} />
         </Switch>
 

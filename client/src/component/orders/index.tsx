@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import OrdersTable from "../orders-table";
+import Table from "../table";
 
 const ordersUrl = "http://localhost:4000/getOrders";
 const shipCitiesUrl = "http://localhost:4000/getShips";
@@ -29,10 +29,11 @@ export default class Orders extends React.Component<any, any> {
     }
   };
 
-  getOrderBycity = async (shipCity: any) => {
+  getOrderBycity = async (shipCity: any, paymentType: any) => {
     try {
-      const result = await axios.post(getOrderBycityUrl, {shipCity});
-      this.setState({ orders: result.data });
+      const result = await axios.post(getOrderBycityUrl, {shipCity, paymentType});
+      console.log(result.data);
+      if (result.data) this.setState({ orders: result.data });
       } catch {
       console.log("error with orders");
     }    
@@ -49,7 +50,7 @@ export default class Orders extends React.Component<any, any> {
 
   render() {
     const { orders, citiesList, paymentTypesList } = this.state;
-    if (!orders.length) return <h2>No data</h2>;
+    //if (!orders.length) return <h2>No data</h2>;
  
     const headers = getHeaders(orders);
     const data = getTableBody(orders);  
@@ -69,7 +70,7 @@ export default class Orders extends React.Component<any, any> {
                   this.setState({shipCity: value})
                 }}
               > 
-   <option>Cities..</option>
+            <option value="all">All cities..</option>
              {citiesOptions}
               </select>
             </div>
@@ -82,7 +83,7 @@ export default class Orders extends React.Component<any, any> {
                   this.setState({paymentType: value})
                 }}
               >
-                <option>Pyment type..</option>
+                <option value="all">All pyment type..</option>
               {paymentTypeOptions}
               </select>
             </div>
@@ -90,16 +91,15 @@ export default class Orders extends React.Component<any, any> {
               <button type="button" className="btn btn-primary"
               onClick={()=>{
                 const { shipCity, paymentType} = this.state;
-                this.getOrderBycity(shipCity);
-                this.getOrdersByPaymentType(paymentType)
-              
+                if (!shipCity && !paymentType) return;
+                this.getOrderBycity(shipCity, paymentType);
               }}>
                 Submit
               </button>
             </div>
           </div>
         </form>
-        <OrdersTable headers={headers} data={data} />
+        <Table headers={headers} data={data} />
       </div>
     );
   }
