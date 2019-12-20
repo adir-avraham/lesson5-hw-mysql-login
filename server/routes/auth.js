@@ -3,9 +3,10 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const pool = require("../db/pool");
 const bcrypt = require('bcryptjs'); 
-const salt = bcrypt.genSaltSync(10);
-
-
+const salt = "$2a$10$AQpgdFhYR3oM0RBIP4f6pu"
+//const salt = bcrypt.genSaltSync(10);
+//to fix it (for dynamic salt) => save the salt in another column on mysql
+const verify = require('../verify/verify')
 
 router.post("/login", async (req, res, next) => {
     try {
@@ -33,20 +34,7 @@ router.post("/register", async (req, res, next) => {
 })
 
 
-
-router.use('/changePassword',(req, res, next) =>{
-  const { authorization } = req.headers;
-  console.log("req.headers-stringify===>> " + JSON.stringify(req.headers))
-  console.log("authorization=>>", authorization)
-  
-  jwt.verify(authorization, process.env.SECRET, (err, decoded) =>{
-      if (err) res.status(401).json({message: "Verification failed", redirect: false});
-      console.log("deco", decoded);
-      next();
-
-    })
-})
-
+//router.use('/', verify)
 
 router.post('/changePassword', async (req, res, next) =>{  
     try {
@@ -79,7 +67,6 @@ function getJwt(p) {
 async function isUserExist(email, password = null) {
     const payload = password ? [email, bcrypt.hashSync(password, salt)] : [email];
     const query = password ? getUserPasswordExistQuery() : getUserExistQuery();
-    console.log(payload, query)
     const [result] = await pool.execute(query, payload);
     const [firstUser] = result;
     return firstUser;

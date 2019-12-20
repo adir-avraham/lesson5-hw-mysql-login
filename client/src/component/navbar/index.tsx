@@ -31,6 +31,11 @@ export default class Navbar extends React.Component<any, any> {
               <span className="nav-link">Change password</span>
             </Link>
           </li>
+          <li className="nav-item">
+            <Link to="/orders/">
+              <span className="nav-link">Orders</span>
+            </Link>
+          </li>
         </ul>
     </nav>
   );

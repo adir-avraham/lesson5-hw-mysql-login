@@ -5,6 +5,7 @@ import Register from './component/register';
 import Login from './component/login';
 import HomePage from './component/home';
 import ChangePassword from './component/change-password';
+import Orders from './component/orders';
 
 const App: React.FC = () => {
   return (
@@ -15,10 +16,11 @@ const App: React.FC = () => {
         <Navbar />
 
         <Switch>
+          <Route path="/home" component={HomePage} />      
           <Route path="/register" component={Register} />
           <Route path="/login" component={Login} />      
           <Route path="/change-password" component={ChangePassword} />      
-          <Route path="/home" component={HomePage} />      
+          <Route path="/orders" component={Orders} />      
           <Route path="**" component={Register} />
         </Switch>
 

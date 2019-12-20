@@ -5,7 +5,7 @@ import {userLogin} from '../../redux/actions';
 import React from 'react';
 
 
-const logInUrl = ('http://localhost:4000/auth/login')
+const logInUrl = ('http://localhost:4000/auth/login');
 
 
 

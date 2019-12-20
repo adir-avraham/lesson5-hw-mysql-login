@@ -2,13 +2,13 @@ import React from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {connect} from 'react-redux';
+import mainAxios from "../../axios/maimAxios";
 
 
 
 
 
-
-const changePasswordUrl = ('http://localhost:4000/auth/changePassword')
+const changePasswordUrl = ('http://localhost:4000/auth/changePassword');
 
 
 export class ChangePassword extends React.Component<any, any> {
@@ -18,22 +18,31 @@ export class ChangePassword extends React.Component<any, any> {
         message: "Hello",
     }
     
+    
     componentDidMount = async () => {
-      const { token, userId }  = this.props.currentUser
+      const token = localStorage.getItem('token');
       
-        console.log(token)
-        console.log(userId)
+      //if (!token) return this.props.history.push('/login');
+      
+      try{
 
-        //if (Object.keys(this.props.currentUser).length === 0) return this.props.history.push('/login');
+        const result = await mainAxios.post("/auth/changePassword");
+        console.log(result)
+        const { redirect } = result.data
+        if (!redirect) {
+          return this.props.history.push('/login');
+        }
         
-        const headers = {
-          'content-type': 'application/json',
-          'authorization': '111111111-test-1111111111-test-11111111111111111111'
-        } 
-        const result = await axios.post(changePasswordUrl ,{headers: headers});
-        console.log("result=>" + result)
-        
+      } catch {
+        console.log("some error")
+        return this.props.history.push('/login');
+      }
     }
+    
+   
+
+        
+
     
     handleOnChange = (event: any) => {
         const { target } = event;
