@@ -3,14 +3,12 @@ import axios from "axios";
 import Table from "../table";
 import mainAxios from '../../axios/maimAxios';
 
-const ordersUrl = "http://localhost:4000/getOrders";
-const shipCitiesUrl = "http://localhost:4000/getShips";
 const getOrderBycityUrl = "http://localhost:4000/getOrderByCity";
-const paymentTypesUrl = "http://localhost:4000/getPaymentTypes";
-const getOrderByPaymentTypeUrl = "http://localhost:4000/getOrderByPatmentType";
+
 
 
 export default class Orders extends React.Component<any, any> {
+
   state = {
     orders: [],
     shipCity: "",
@@ -19,15 +17,15 @@ export default class Orders extends React.Component<any, any> {
     paymentTypesList: []
   };
 
+
   componentDidMount = async () => {
     const token = localStorage.getItem('token');
+    if (!token) return this.props.history.push('/login');
     
-    //if (!token) return this.props.history.push('/login');
     try {
       const result = await mainAxios.post("/getOrders");
       const result2 = await mainAxios.post("/getShips");
-      const result3 = await mainAxios.post("/getPaymentTypes");
-      
+      const result3 = await mainAxios.post("/getPaymentTypes");  
       if (!result.data.redirect || !result2.data.redirect || !result3.data.redirect ) {
         return this.props.history.push('/login');
       }
@@ -39,30 +37,27 @@ export default class Orders extends React.Component<any, any> {
 
   getOrderBycity = async (shipCity: any, paymentType: any) => {
     try {
-      const result = await axios.post(getOrderBycityUrl, {shipCity, paymentType});
-      console.log(result.data);
-      if (result.data) this.setState({ orders: result.data });
+      const result = await mainAxios.post(getOrderBycityUrl, {shipCity, paymentType});
+      const {redirect, filteredData} = result.data;
+      if (!redirect) {
+        return this.props.history.push('/login');
+      }
+      if (filteredData) this.setState({ orders: filteredData });
       } catch {
       console.log("error with orders");
     }    
   }
 
-  getOrdersByPaymentType = async (paymentType: any) => {
-    try {
-      const result = await axios.post(getOrderByPaymentTypeUrl, {paymentType});
-      this.setState({ orders: result.data });
-      } catch {
-      console.log("error with orders");
-    }    
-  }
 
   render() {
+    
     const { orders, citiesList, paymentTypesList } = this.state;
     //if (!orders.length) return <h2>No data</h2>;
     const headers = getHeaders(orders);
     const data = getTableBody(orders);  
     const citiesOptions = getCitiesOptions(citiesList);
     const paymentTypeOptions = getpaymentTypeOptions(paymentTypesList);
+    
     return (
       <div>
         <h1>Orders table</h1>
@@ -111,6 +106,7 @@ export default class Orders extends React.Component<any, any> {
     );
   }
 }
+
 
 function getHeaders(data: any) {
   if (!data.length) return;
@@ -168,8 +164,6 @@ function getTableRow(row: any) {
     return <td key={"td_" + index}> {value}</td>;
   });
 }
-
-
 
 
 function getCitiesOptions(shipCities: any) {

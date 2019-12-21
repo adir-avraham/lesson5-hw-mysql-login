@@ -6,11 +6,6 @@ import mainAxios from "../../axios/maimAxios";
 
 
 
-
-
-const changePasswordUrl = ('http://localhost:4000/auth/changePassword');
-
-
 export class ChangePassword extends React.Component<any, any> {
     state = {
         newPassword: "",
@@ -18,49 +13,41 @@ export class ChangePassword extends React.Component<any, any> {
         message: "Hello",
     }
     
-    
     componentDidMount = async () => {
       const token = localStorage.getItem('token');
-      
       if (!token) return this.props.history.push('/login');
       
       try{
-
         const result = await mainAxios.post("/auth/changePassword");
-        console.log(result)
         const { redirect } = result.data
         if (!redirect) {
           return this.props.history.push('/login');
         }
-        
       } catch {
         console.log("some error")
         return this.props.history.push('/login');
       }
     }
          
-
-    
     handleOnChange = (event: any) => {
         const { target } = event;
         this.setState({ [target.name]: target.value })
     }
     
     handleChangePassword = async () => {
-      
-      console.log(this.state)
-        const result = await mainAxios.post(changePasswordUrl, this.state)
-        const { redirect, message } = result.data
+        const result = await mainAxios.post("/auth/changePassword", this.state)
+        const { redirect, message, isUpdated } = result.data        
         this.setState({ message: message })
-        if (redirect) {
-            alert(message)
-            this.props.history.push('/home')
+        if (isUpdated) {
+          alert(message);
+          this.props.history.push('/home');
         }
-    if (!redirect) this.props.history.push('/login')
-    
-}
+        if (!redirect) this.props.history.push('/login');
+    }
+
 render() {
     const {message} = this.state
+
     return (
         <div className="container">
         <div className="row justify-content-md-center">
@@ -97,7 +84,6 @@ render() {
           </div>
         </div>
       </div>
-
     );
   }
 }

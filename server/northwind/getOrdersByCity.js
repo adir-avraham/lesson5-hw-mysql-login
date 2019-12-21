@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db/pool");
+const verify = require('../verify/verify');
 
+
+router.use('/', verify);
 
 router.post("/", async (req, res, next) => {
     const {  shipCity, paymentType } = req.body;
@@ -10,7 +13,7 @@ router.post("/", async (req, res, next) => {
     if (shipCity && paymentType) {
         try {
         const [result] = await pool.execute(getOrderQuery(), [shipCity, paymentType]) 
-        return res.json(result);
+        return res.json({filteredData: result, redirect: true} );
     } catch {
         return res.json("some error")
     }
@@ -19,7 +22,7 @@ router.post("/", async (req, res, next) => {
         const payload = shipCity ? [shipCity] : [paymentType];
         const query = shipCity ? getOrdersByCityQuery() : getOrdesByPaymentQuery();
         const [result] = await pool.execute(query, payload);
-        return res.json(result) 
+        return res.json({filteredData: result, redirect: true}) 
     }  catch {
     return res.json("some error")
 }
