@@ -1,4 +1,7 @@
 import React from 'react';
+import 'bootstrap/dist/js/bootstrap.min.js';	
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'jquery/dist/jquery.min.js';
 import Navbar from './component/navbar';
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Register from './component/register';
@@ -7,6 +10,7 @@ import HomePage from './component/home';
 import ChangePassword from './component/change-password';
 import Orders from './component/orders';
 import SearchCustomer from './component/search-customer';
+
 
 const App: React.FC = () => {
   return (

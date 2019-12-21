@@ -12,7 +12,7 @@ state = {
   password: "",
   firstName: "",
   lastName: "",
-  message: "hello"
+  message: "Hello"
 }
 
 handleOnChange = (event: any) =>{
@@ -33,7 +33,7 @@ handleRegister = async () => {
 }
 
 render() {
-
+  const {message} = this.state
   return (
     <div className="container">
     <div className="row justify-content-md-center">
@@ -78,7 +78,7 @@ render() {
           onChange={this.handleOnChange}
           />
           <div className="checkbox mb-3">
-            <span>{this.state.message}</span>
+          {message === "Hello" ? <span>{message}</span> : <span className="text-danger">{message}</span>}
           </div>
           <button className="btn btn-lg btn-primary btn-block"
           type="button"

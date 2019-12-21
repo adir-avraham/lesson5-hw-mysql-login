@@ -22,7 +22,7 @@ export class ChangePassword extends React.Component<any, any> {
     componentDidMount = async () => {
       const token = localStorage.getItem('token');
       
-      //if (!token) return this.props.history.push('/login');
+      if (!token) return this.props.history.push('/login');
       
       try{
 
@@ -38,10 +38,7 @@ export class ChangePassword extends React.Component<any, any> {
         return this.props.history.push('/login');
       }
     }
-    
-   
-
-        
+         
 
     
     handleOnChange = (event: any) => {
@@ -50,15 +47,16 @@ export class ChangePassword extends React.Component<any, any> {
     }
     
     handleChangePassword = async () => {
-        console.log(this.state)
-        const result = await axios.post(changePasswordUrl, this.state)
+      
+      console.log(this.state)
+        const result = await mainAxios.post(changePasswordUrl, this.state)
         const { redirect, message } = result.data
         this.setState({ message: message })
         if (redirect) {
             alert(message)
             this.props.history.push('/home')
         }
-    if (!redirect) this.props.history.push('/change-password')
+    if (!redirect) this.props.history.push('/login')
     
 }
 render() {

@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
+const verify = require('../verify/verify');
 
 
-router.get('/', async (req, res, next) => {
+router.use('/', verify);
+
+router.post('/', async (req, res, next) => {
      
     try{
         const result = await pool.execute(getShipsQuery());
         const [first] = result
-        return res.json(first);
+        return res.json({shipCities: first, redirect: true});
     } catch {
         return res.json("some error");
     }

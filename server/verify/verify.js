@@ -12,7 +12,9 @@ router.post('/',(req, res, next) =>{
     jwt.verify(authorization, process.env.SECRET, (err, decoded) =>{
         if (err) res.json({message: "Verification failed", redirect: false});
         console.log("deco", decoded);
-        return res.json({message: "Verification succeed", redirect: true});
+        //return res.json({message: "Verification succeed", redirect: true});
+        req.decoded = decoded;
+        next()
         })
     
   })

@@ -1,17 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db/pool");
+const verify = require('../verify/verify');
 
+router.use('/', verify);
 
 router.post("/", async (req, res, next) => {
     const [query, params] = getCustomerQuery(req.body)
-
+    if (!params.length) return;
     try {
         const result = await pool.execute(query, params) 
         const [first] = result
-        return res.json(first);
+        return res.json({customer: first, redirect: true});
     } catch {
-        return res.json("some error")
+        return res.json({message: "some error from customer", redirect: false})
     }
 
 });

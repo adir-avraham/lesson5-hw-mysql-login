@@ -34,13 +34,15 @@ router.post("/register", async (req, res, next) => {
 })
 
 
-//router.use('/', verify)
 
+router.use('/changePassword', verify);
 router.post('/changePassword', async (req, res, next) =>{  
     try {
         const {newPassword, passwordConfirm, userId} = req.body;
+        //if  (!newPassword || !passwordConfirm) return;
+        const {id} = req.decoded
         if (newPassword !== passwordConfirm) return res.json({message: `No match password confirm`, redirect: false });
-        const result = await updatePassword(newPassword, userId); 
+        const result = await updatePassword(newPassword, id); 
         if (!result) return res.json({message: `Update password failed`, redirect: false });
         return res.json({message: `password updated`, redirect: true }); 
     } catch {

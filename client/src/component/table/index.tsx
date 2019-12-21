@@ -7,7 +7,7 @@ export default class OrdersTable extends React.Component<any, any> {
         const { headers, data } = this.props;
   
         if (!Array.isArray(headers) || !Array.isArray(data))
-        return <h2 className="alert alert-danger" role="alert">No results</h2>;
+        return <h3 className="alert alert-danger" role="alert">No data</h3>;
 
     return (
         <table className= "table table-bordered table-striped table-dark">

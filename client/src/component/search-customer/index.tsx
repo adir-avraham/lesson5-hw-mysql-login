@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Table from '../table';
+import mainAxios from '../../axios/maimAxios';
 
 const getCustomerUrl = "http://localhost:4000/getCustomer";
 
@@ -11,6 +12,28 @@ export default class SearchCustomer extends React.Component<any, any> {
     customersResulrt: []
   };
 
+  componentDidMount = async () => {
+    const token = localStorage.getItem('token');
+    
+    if (!token) return this.props.history.push('/login');
+    
+    try{
+
+      const result = await mainAxios.post("/getCustomer");
+      console.log("ressssssss"  + JSON.stringify(result.data))
+      
+      const { redirect } = result.data
+      console.log(redirect)
+      if (!redirect) {
+        return this.props.history.push('/login');
+      }
+      
+    } catch {
+      console.log("some error")
+      return this.props.history.push('/login');
+    }
+  }
+
   handleChange = (event: any) => {
     const { value, name } = event.target;
     this.setState({ [name]: value });
@@ -18,8 +41,10 @@ export default class SearchCustomer extends React.Component<any, any> {
 
   handleSearch = async () => {
     const { first_name, last_name } = this.state;
-    const result = await axios.post(getCustomerUrl, { first_name, last_name });
-    this.setState({ customersResulrt: result.data });
+    const result = await mainAxios.post("/getCustomer", { first_name, last_name });
+    const {customer, redirect} = result.data;
+    if (redirect) this.setState({ customersResulrt: customer });
+    if (!redirect) this.props.history.push('/login');
   };
 
   render() {
